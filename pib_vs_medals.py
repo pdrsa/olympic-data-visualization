@@ -9,7 +9,6 @@ from sklearn.metrics import r2_score
 
 # Incorporate data
 df_pib = pd.read_parquet("data/medal_and_pib_summer.parquet")
-print("loaded df")
 
 def get_trendline(df1, year):
     yearly_df = df1[df1['Year'] == year]
