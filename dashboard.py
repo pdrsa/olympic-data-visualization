@@ -8,9 +8,11 @@ from compare_medals import initialize_compare_medals
 from heatmap import initialize_heatmap
 from performance_evolution import initialize_performance_evolution
 from compare_countries import initialize_compare_countries
+from pib_vs_medals import initialize_pib
 
 # Incorporate data
 df = pd.read_csv("data/medals_processed.csv")
+df_pib = pd.read_parquet("data/medal_and_pib_summer.parquet")
 
 # Initialize the app
 app = Dash(__name__)
@@ -29,7 +31,8 @@ app.layout = html.Div([
                     {'label': 'Compare Medals', 'value': 'Compare Medals'},
                     {'label': 'Compare Countries', 'value': 'Compare Countries'},
                     {'label': 'Medals Heatmap', 'value': 'Heatmap'},
-                    {'label': 'Performance x Time', 'value': 'Perf Evol'}
+                    {'label': 'Performance x Time', 'value': 'Perf Evol'},
+                    {'label': 'GPD x Medals Count', 'value': 'GPD vs Medals'}
                 ],
                 value='Compare Medals',
                 id='choose-graph'
@@ -64,6 +67,9 @@ def update_graph(graph_type):
     
     if graph_type == "Compare Countries":
         return initialize_compare_countries()
+    
+    if graph_type == "GPD vs Medals":
+        return initialize_pib()
 
 
 app.run_server()
