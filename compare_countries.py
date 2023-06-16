@@ -24,15 +24,21 @@ olympic_results = pd.read_csv('./olympic_games/olympic_results.csv')
 code_map = olympic_results[['country_name', 'country_code']].drop_duplicates().set_index('country_name').to_dict()['country_code']
 
 olympic_events = olympic_events[olympic_events.Season == 'Summer']
-y = olympic_events.groupby(['Team', 'Year']).agg({'Medal':'count'}).reset_index()
+
+for pat, country in zip(["China", 'United States\-|United States$', 'Russia'],
+                        ["People's Republic of China",'United States of America', 'Russian Federation']):
+    olympic_events.loc[olympic_events.Team.str.match(pat), 'Team'] = country
+    olympics_counts.loc[olympics_counts.Team.str.match(pat), 'Team'] = country
+
+y = olympic_events.groupby(['Team','NOC','Year']).agg({'Medal':'count'}).reset_index()
 x = olympics_counts.groupby(['Team', 'Year']).visitas_acumuladas.mean()
 df = x.reset_index().merge(y.reset_index(),on=['Team', 'Year'])
+
 
 
 graph_layout = go.Layout(
     xaxis={'title': 'Ano'},
     yaxis={'title': f'Número de medalhas obtidas'},
-    yaxis_range=[0,100],
     margin={'t': 20, 'b' : 5},
     )
 
@@ -82,6 +88,16 @@ def initialize_compare_countries():
                                 id='scatter-plot-one',
                             )
                         ]),
+                    html.Div(
+                            id='yaxis2row1',
+                            children='Número médio de olimpíadas disputadas pela delegação',
+                            style={
+                                'writing-mode' : 'vertical-lr',
+                                'height' : '90%',
+                                'font-size' : '15px',
+                                'margin-top' : '20px'
+                            }
+                    )
             ]),
             html.Div(
                 id='row-2',
@@ -117,6 +133,16 @@ def initialize_compare_countries():
                             id='scatter-plot-two',
                         )
                     ], style={'flex' : '1'}),
+                    html.Div(
+                            id='yaxis2row2',
+                            children='Número médio de olimpíadas disputadas pela delegação',
+                            style={
+                                'writing-mode' : 'vertical-lr',
+                                'height' : '90%',
+                                'font-size' : '15px',
+                                'margin-top' : '20px'
+                            }
+                    )
             ]),
         ])
 ])]
@@ -129,8 +155,8 @@ def initialize_compare_countries():
 )
 def update_function_for_country(country):
     print(country)
-    subdf = df[df.Team == country]
-#
+    subdf = df[df.Team.str.match(country)]
+    print(subdf)
     return   go.Figure(
                                 data=go.Bar(
                                     x=subdf['Year'],
@@ -142,9 +168,10 @@ def update_function_for_country(country):
                                         showscale=True,
                                         # size=12,
                                         cmax = 4,
-                                    )
+                                    ),
                                 ),
-                                layout=graph_layout
+                                
+                                layout=graph_layout,
     )
 
 @callback(
@@ -176,7 +203,6 @@ def update_function_for_country_two(country):
 )
 def update_flag_one(country):
     code = code_map.get(country)
-    print(code)
     if code is None:
         return f'https://freepngimg.com/save/117897-cross-mark-free-download-image/1156x614'
     else:
@@ -188,7 +214,6 @@ def update_flag_one(country):
 )
 def update_flag_two(country):
     code = code_map.get(country)
-    print(code)
     if code is None:
         return f'https://freepngimg.com/save/117897-cross-mark-free-download-image/1156x614'
     else:
@@ -203,7 +228,9 @@ def update_header_one(country):
 
 @callback(
     Output('country-header-two', 'children'),
-    Input('country-dropdown-two', 'value')
+    [Input('country-dropdown-two', 'value')],
+    State('scatter-plot-one', 'figure')
 )
-def update_header_two(country):
+def update_header_two(country, figure):
     return country
+

@@ -23,38 +23,39 @@ app = Dash(__name__)
 
 
 # App layout
-app.layout = html.Div([
-    # Sidebar menu
-    html.Div(
-        id='sidebar',
-        className='sidebar',
-        children=[
-            html.H3('Graph Options'),
-            dcc.Dropdown(
-                options=[
-                    {'label': 'Compare Medals', 'value': 'Compare Medals'},
-                    {'label': 'Compare Countries', 'value': 'Compare Countries'},
-                    {'label': 'Medals Heatmap', 'value': 'Heatmap'},
-                    {'label': 'Performance x Time', 'value': 'Perf Evol'},
-                    {'label': 'GPD x Medals Count', 'value': 'GPD vs Medals'},
-                    {'label': 'Sports Through Time', 'value': 'Sports Through Time'},
-                    {'label': 'Medals World Map', 'value': 'Medals World Map'}
-                ],
-                value='Compare Medals',
-                id='choose-graph'
-            )
-        ]
-    ),
-    # Main content
-    html.Div(
-        id='content',
-        className='content',
-        children=[
-            html.Hr()
-        ],
-        style={'height':'100%', 'width':'100%'}
-    )
-])
+app.layout = html.Div(
+    children=[
+        # Sidebar menu
+        html.Div(
+            id='sidebar',
+            className='sidebar',
+            children=[
+                html.H3('Graph Options'),
+                dcc.Dropdown(
+                    options=[
+                        {'label': 'Compare Medals', 'value': 'Compare Medals'},
+                        {'label': 'Compare Countries', 'value': 'Compare Countries'},
+                        {'label': 'Medals Heatmap', 'value': 'Heatmap'},
+                        {'label': 'Performance x Time', 'value': 'Perf Evol'},
+                        {'label': 'GPD x Medals Count', 'value': 'GPD vs Medals'},
+                        {'label': 'Sports Through Time', 'value': 'Sports Through Time'},
+                        {'label': 'Medals World Map', 'value': 'Medals World Map'}
+                    ],
+                    value='Compare Medals',
+                    id='choose-graph'
+                )
+            ]
+        ),
+        # Main content
+        html.Div(
+            id='content',
+            className='content',
+            children=[
+                html.Hr()
+            ],
+            style={'height':'100%', 'width':'100%', }
+        )],
+    style={'fontFamily': 'Arial, sans-serif'})
     
 # Add controls to build the interaction
 @callback(
